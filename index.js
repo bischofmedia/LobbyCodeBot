@@ -14,28 +14,29 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-  // Check 1: Überhaupt eine Nachricht?
-  console.log(`Bot sieht Nachricht von ${message.author.username} in Kanal: ${message.channel.name}`);
-
   if (message.author.bot) return;
+  if (message.channel.name !== "lobby-codes") return;
 
-  // Check 2: Kanal-Filter (Groß-/Kleinschreibung beachten!)
-  if (message.channel.name.toLowerCase() !== "_lobby-codes") {
-    console.log(`Ignoriere Nachricht, da Kanal "${message.channel.name}" nicht "lobby-codes" ist.`);
+  const text = message.content.trim();
+
+  // REGEX: genau 6 Zeichen, nur Buchstaben/Zahlen
+  const codeRegex = /^[A-Za-z0-9]{6}$/;
+
+  if (!codeRegex.test(text)) {
+    console.log("Kein gültiger Code:", text);
     return;
   }
 
   const payload = {
     host: message.author.username,
-    discordId: message.author.id,
-    message: message.content
+    code: text
   };
 
   try {
     await axios.post(process.env.MAKE_WEBHOOK_URL, payload);
-    console.log("Erfolgreich an Make gesendet:", payload);
+    console.log("Gültiger Code gesendet:", payload);
   } catch (err) {
-    console.error("Fehler beim Senden an Make:", err.response?.data || err.message);
+    console.error("Webhook-Fehler:", err.message);
   }
 });
 
