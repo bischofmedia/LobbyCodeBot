@@ -20,7 +20,7 @@ client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
   // Check 2: Kanal-Filter (Groß-/Kleinschreibung beachten!)
-  if (message.channel.name.toLowerCase() !== "lobby-codes") {
+  if (message.channel.name.toLowerCase() !== "_lobby-codes") {
     console.log(`Ignoriere Nachricht, da Kanal "${message.channel.name}" nicht "lobby-codes" ist.`);
     return;
   }
