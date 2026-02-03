@@ -1,5 +1,18 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import axios from "axios";
+import http from "http"; // Erforderlich für Render
+
+// --- RENDER PORT BINDING ---
+// Dieser Teil sagt Render: "Ich bin wach!" und verhindert den Timeout.
+const port = process.env.PORT || 10000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write("Lobby-Bot is active");
+  res.end();
+}).listen(port, () => {
+  console.log(`Web-Server aktiv auf Port ${port}`);
+});
+// ----------------------------
 
 const client = new Client({
   intents: [
@@ -15,7 +28,9 @@ client.once("ready", () => {
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (message.channel.name !== "lobby-codes") return;
+  
+  // Wichtig: toLowerCase(), falls Discord den Namen groß schreibt
+  if (message.channel.name.toLowerCase() !== "lobby-codes") return;
 
   const text = message.content.trim();
 
@@ -23,7 +38,7 @@ client.on("messageCreate", async (message) => {
   const codeRegex = /^[A-Za-z0-9]{6}$/;
 
   if (!codeRegex.test(text)) {
-    console.log("Kein gültiger Code:", text);
+    // Optional: Logge das nur für dich zur Diagnose
     return;
   }
 
