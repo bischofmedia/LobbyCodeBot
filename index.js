@@ -43,8 +43,9 @@ client.on("messageCreate", async (message) => {
   }
 
   const payload = {
-    host: message.author.username,
-    code: text
+    host: message.member ? message.member.displayName : message.author.username,
+    code: text,
+    discordId: message.author.id
   };
 
   try {
